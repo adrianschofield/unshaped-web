@@ -1,0 +1,15 @@
+[
+    {
+        "title": "Block Break (Javascript)",
+        "description": "A simple block break game built in Javascript and HTML",
+        "thumbnail": "games/blockj/thumbnail.png",
+        "unity": false
+    },
+    {
+        "title": "Block Break (Unity)",
+        "description": "A simple block break game built with Unity",
+        "thumbnail": "games/blocku/thumbnail.png",
+        "unity": true
+    }
+]
+

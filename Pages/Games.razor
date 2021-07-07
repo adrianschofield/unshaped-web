@@ -1,0 +1,87 @@
+﻿@page "/games"
+@inject HttpClient Http
+
+<!--<h1 class="display-5">Games I've written</h1>-->
+
+<!--<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>-->
+
+@if (games == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <!--<table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Thumbnail</th>
+                <th>Unity Game?</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var game in games)
+            {
+                <tr>
+                    <td>@game.Title</td>
+                    <td>@game.Description</td>
+                    <td>@game.Thumbnail</td>
+                    <td>@game.Unity.ToString()</td>
+                    <td>@game.Link</td>
+                </tr>
+            }
+        </tbody>
+    </table>-->
+    @foreach (var game in games)
+    {
+        <div class="container ps-4 pt-2 pb-4 border">
+            <div class="row display-6">
+                @game.Title
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <p>
+                        <a href=@game.Link target="_blank">
+                            <img class="img-thumbnail" src=@game.Thumbnail />
+                        </a>
+                    </p>
+                </div>
+                <div class="col-sm-8">
+                    @game.Description
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    //private int currentCount = 0;
+    private GamesData[] games;
+
+    protected override async Task OnInitializedAsync()
+    {
+        games = await Http.GetFromJsonAsync<GamesData[]>("games/gamedata.json");
+        foreach (var game in games) {     
+            var temp = game.Thumbnail.Substring(0, game.Thumbnail.IndexOf("/", 7));
+            game.Link = $"{temp}/index.html";  
+        }
+    }
+
+    /*private void IncrementCount()
+    {
+        currentCount++;
+    }*/
+
+    public class GamesData
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Thumbnail { get; set; }
+        public bool Unity { get; set; }
+        public string Link { get; set; }
+    }
+}

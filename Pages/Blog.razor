@@ -1,0 +1,259 @@
+@page "/blog"
+@inject HttpClient Http
+
+<!--<h1>Blog</h1>-->
+
+<!--<p>This component demonstrates fetching data from the server.</p>-->
+
+@if (/*forecasts == null ||*/ posts == null)
+{
+    <p><em>Loading... be right with you</em></p>
+}
+else
+{
+    <!--<table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>-->
+    @foreach(var post in posts)
+    {
+    <div class="container ps-4 pt-2 pb-4 border rounded-3">
+            <div class="row h3">
+                <a href=@post.guid.rendered>
+                    @((MarkupString)post.title.rendered)
+                </a>
+            </div>
+            <div class="row">
+                <div class="col-sm-8">
+                    @((MarkupString)post.excerpt.rendered)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-8 text-muted">
+                    @foreach(var user in users)
+                    {
+                        if (user.id == post.author) {
+                            authorName = user.name;
+                            break;
+                        }
+                    }
+                    Posted by @authorName on @post.date.ToLongDateString()
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    // private WeatherForecast[] forecasts;
+
+    private List<Root> posts;
+
+    private List<UsersRoot> users;
+    private string authorName = "Unknown";
+
+    protected override async Task OnInitializedAsync()
+    {
+        string wpPostsUrl = "http://unshapedadrian.co.uk/blog/index.php?rest_route=/wp/v2/posts";
+        string wpUserssUrl = "http://unshapedadrian.co.uk/blog/index.php?rest_route=/wp/v2/users";
+        // forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        posts = await Http.GetFromJsonAsync<List<Root>>(wpPostsUrl);
+        users = await Http.GetFromJsonAsync<List<UsersRoot>>(wpUserssUrl);
+    }
+
+    public class WeatherForecast
+    {
+        public DateTime Date { get; set; }
+
+        public int TemperatureC { get; set; }
+
+        public string Summary { get; set; }
+
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+
+    public class BlogPost
+    {
+        public string Title { get; set; }
+        public string Excerpt { get; set; }
+        public DateTime Published { get; set; }
+        public string Author { get; set; }
+    }
+
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
+    public class Guid
+    {
+        public string rendered { get; set; }
+    }
+
+    public class Title
+    {
+        public string rendered { get; set; }
+    }
+
+    public class Content
+    {
+        public string rendered { get; set; }
+        public bool @protected { get; set; }
+    }
+
+    public class Excerpt
+    {
+        public string rendered { get; set; }
+        public bool @protected { get; set; }
+    }
+
+    public class Self
+    {
+        public string href { get; set; }
+    }
+
+    public class Collection
+    {
+        public string href { get; set; }
+    }
+
+    public class About
+    {
+        public string href { get; set; }
+    }
+
+    public class Author
+    {
+        public bool embeddable { get; set; }
+        public string href { get; set; }
+    }
+
+    public class Reply
+    {
+        public bool embeddable { get; set; }
+        public string href { get; set; }
+    }
+
+    public class VersionHistory
+    {
+        public string href { get; set; }
+    }
+
+    public class WpAttachment
+    {
+        public string href { get; set; }
+    }
+
+    public class WpTerm
+    {
+        public string taxonomy { get; set; }
+        public bool embeddable { get; set; }
+        public string href { get; set; }
+    }
+
+    public class Cury
+    {
+        public string name { get; set; }
+        public string href { get; set; }
+        public bool templated { get; set; }
+    }
+
+    public class Links
+    {
+        public List<Self> self { get; set; }
+        public List<Collection> collection { get; set; }
+        public List<About> about { get; set; }
+        public List<Author> author { get; set; }
+        public List<Reply> replies { get; set; }
+
+        [JsonPropertyName("version-history")]
+        public List<VersionHistory> VersionHistory { get; set; }
+
+        [JsonPropertyName("wp:attachment")]
+        public List<WpAttachment> WpAttachment { get; set; }
+
+        [JsonPropertyName("wp:term")]
+        public List<WpTerm> WpTerm { get; set; }
+        public List<Cury> curies { get; set; }
+    }
+
+    public class Root
+    {
+        public int id { get; set; }
+        public DateTime date { get; set; }
+        public DateTime date_gmt { get; set; }
+        public Guid guid { get; set; }
+        public DateTime modified { get; set; }
+        public DateTime modified_gmt { get; set; }
+        public string slug { get; set; }
+        public string status { get; set; }
+        public string type { get; set; }
+        public string link { get; set; }
+        public Title title { get; set; }
+        public Content content { get; set; }
+        public Excerpt excerpt { get; set; }
+        public int author { get; set; }
+        public int featured_media { get; set; }
+        public string comment_status { get; set; }
+        public string ping_status { get; set; }
+        public bool sticky { get; set; }
+        public string template { get; set; }
+        public string format { get; set; }
+        public List<object> meta { get; set; }
+        public List<int> categories { get; set; }
+        public List<object> tags { get; set; }
+        public Links _links { get; set; }
+    }
+
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
+    public class AvatarUrls
+    {
+        public string _24 { get; set; }
+        public string _48 { get; set; }
+        public string _96 { get; set; }
+    }
+
+    public class UsersSelf
+    {
+        public string href { get; set; }
+    }
+
+    public class UsersCollection
+    {
+        public string href { get; set; }
+    }
+
+    public class UsersLinks
+    {
+        public List<UsersSelf> self { get; set; }
+        public List<UsersCollection> collection { get; set; }
+    }
+
+    public class UsersRoot
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string url { get; set; }
+        public string description { get; set; }
+        public string link { get; set; }
+        public string slug { get; set; }
+        public AvatarUrls avatar_urls { get; set; }
+        public List<object> meta { get; set; }
+        public UsersLinks _links { get; set; }
+    }
+
+
+}
