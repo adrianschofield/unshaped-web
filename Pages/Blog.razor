@@ -35,14 +35,14 @@ else
     @foreach(var post in posts)
     {
     <div class="container ps-4 pt-2 pb-4 border rounded-3">
-            <div class="row h3">
-                <a href=@post.guid.rendered>
+            <div class="row display-6 primary">
+                <!--<a href=@post.guid.rendered>-->
                     @((MarkupString)post.title.rendered)
-                </a>
+                <!--</a>-->
             </div>
             <div class="row">
                 <div class="col-sm-8">
-                    @((MarkupString)post.excerpt.rendered)
+                    @((MarkupString)(post.excerpt.rendered))
                 </div>
             </div>
             <div class="row">
@@ -55,6 +55,21 @@ else
                         }
                     }
                     Posted by @authorName on @post.date.ToLongDateString()
+                </div>
+            </div>
+            <!--<p>
+                <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">
+                    @((MarkupString)post.title.rendered)
+                </button>
+                <div class="collapse.show" id="multiCollapseExample1">
+                    <div class="card card-body">
+                        @((MarkupString)post.excerpt.rendered)
+                    </div>
+                </div>
+            </p>-->
+            <div class="collapse" id="multiCollapseExample2">
+                <div class="card card-body">
+                    @((MarkupString)post.content.rendered)
                 </div>
             </div>
         </div>
@@ -71,8 +86,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        string wpPostsUrl = "http://unshapedadrian.co.uk/blog/index.php?rest_route=/wp/v2/posts";
-        string wpUserssUrl = "http://unshapedadrian.co.uk/blog/index.php?rest_route=/wp/v2/users";
+        string wpPostsUrl = "https://unshapedadrian.co.uk/blog/index.php?rest_route=/wp/v2/posts";
+        string wpUserssUrl = "https://unshapedadrian.co.uk/blog/index.php?rest_route=/wp/v2/users";
+        
         // forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
         posts = await Http.GetFromJsonAsync<List<Root>>(wpPostsUrl);
         users = await Http.GetFromJsonAsync<List<UsersRoot>>(wpUserssUrl);
