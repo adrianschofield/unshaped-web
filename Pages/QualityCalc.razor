@@ -1,0 +1,109 @@
+﻿@page "/qualitycalc"
+@using unshaped_web.Models
+
+<h2>Twitch Stream Quality Calculator</h2>
+<div>
+    Fill in four of the five boxes and then press the "Calculate" button.<br>
+	This calculation is based on the documentation on the <a href="https://www.reddit.com/r/Twitch/wiki/guides/bitrate_resolutions_quality">Twitch reddit.</a>
+</div>
+<br/>
+<div class="container">
+    <!--<EditForm Model="@qualityCalculation" OnValidSubmit="@CalculateQuality">-->
+        <EditForm Model="@qualityCalculation" >
+        <p>
+            <div class="row">
+                <div class="col-2">
+                    <label for="horizontalRes">Horizontal Resolution: </label>
+                </div>
+                <div class="col-2">
+                    <InputNumber id="horizontalRes" @bind-Value="qualityCalculation.horResolution" />
+                </div>
+            </div>
+        </p>
+        <p>
+        <div class="row">
+            <div class="col-2">
+                <label for="verticalRes">Vertical Resolution: </label>
+            </div>
+            <div class="col-2">
+                <InputNumber id="verticalRes" @bind-Value="qualityCalculation.verResolution" />
+            </div>
+        </div>
+        </p>
+        <p>
+            <div class="row">
+                <div class="col-2">
+                    <label for="fps">Required FPS: </label>
+                </div>
+                <div class="col-2">
+                    <InputNumber id="fps" @bind-Value="qualityCalculation.fps" />
+                </div>
+             </div>
+        </p>
+        <p>
+            <div class="row">
+                <div class="col-2">
+                    <label for="bitrate">Bitrate: </label>
+                </div>
+                <div class="col-2">
+                    <InputNumber id="bitrate" @bind-Value="qualityCalculation.bitrate" />
+                </div>
+             </div>
+        </p>
+        <p>
+            <div class="row">
+                <div class="col-2">
+                    <label for="quality">Quality Value: </label>
+                </div>
+                <div class="col-2">
+                    <InputNumber id="quality" @bind-Value="qualityCalculation.quality" />
+                </div>
+             </div>
+        </p>
+        <!--<button type="submit">Submit</button>-->
+    </EditForm>
+    <button class="btn btn-primary" @onclick="CalculateQuality">Calculate</button>
+    <button class="btn btn-primary" @onclick="Reset">Reset</button>
+</div>
+
+
+@code {
+    private Quality qualityCalculation = new Quality(0.1);
+    // private Quality results = new Quality();
+    private async Task CalculateQuality() {
+        //We can try and calculate
+		//(pixel width * pixel height * frames-per-second * desired fidelity) / 1,000 = bitrate
+		//default will be for bitrate to be missing
+
+        await Task.Run(() =>DoCalc());      
+    }
+
+    private void DoCalc() {
+        if(this.qualityCalculation.bitrate == 0 ) {
+                this.qualityCalculation.bitrate = (this.qualityCalculation.horResolution * this.qualityCalculation.verResolution * this.qualityCalculation.fps * this.qualityCalculation.quality)/1000;
+            }  else if (this.qualityCalculation.quality == 0) {
+                this.qualityCalculation.quality = ((this.qualityCalculation.bitrate * 1000) / (this.qualityCalculation.horResolution * this.qualityCalculation.verResolution * this.qualityCalculation.fps));	
+            } else if (this.qualityCalculation.fps == 0) {
+                this.qualityCalculation.fps = ((this.qualityCalculation.bitrate * 1000) / (this.qualityCalculation.horResolution * this.qualityCalculation.verResolution * this.qualityCalculation.bitrate));
+                
+            } else if (this.qualityCalculation.horResolution == 0) {
+                this.qualityCalculation.horResolution = ((this.qualityCalculation.bitrate * 1000) / (this.qualityCalculation.fps * this.qualityCalculation.verResolution * this.qualityCalculation.bitrate));
+                
+            } else if (this.qualityCalculation.verResolution == 0) {
+                this.qualityCalculation.verResolution = ((this.qualityCalculation.bitrate * 1000) / (this.qualityCalculation.horResolution * this.qualityCalculation.fps * this.qualityCalculation.bitrate));
+                
+            }
+    }
+
+    private async Task Reset() {
+        await Task.Run(() =>DoReset()); 
+    }
+
+    private void DoReset() {
+        qualityCalculation.bitrate = 0.0;
+        qualityCalculation.fps = 0.0;
+        qualityCalculation.horResolution = 0.0;
+        qualityCalculation.verResolution = 0.0;
+        qualityCalculation.quality = 0.1;
+    }
+}
