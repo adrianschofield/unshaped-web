@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Personal changes
+# Exclude .old files to allow testing new Bootstrap components
+*.old
+
 # User-specific files
 *.rsuser
 *.suo

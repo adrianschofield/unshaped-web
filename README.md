@@ -10,3 +10,9 @@ I wanted to recreate my original website which is based purely on HTML and Boots
 # To Build
 
 dotnet publish -c Release
+
+# Information about dependencies
+
+Currently running Bootstrap 5.3
+
+https://getbootstrap.com/docs/5.3/getting-started/introduction/
