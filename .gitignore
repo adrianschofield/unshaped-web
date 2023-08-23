@@ -10,7 +10,7 @@
 *.userosscache
 *.sln.docstates
 
-# For some reason .vscode/ is not included in this template
+# For some reason .vscode/ is not included in this template so I added it
 .vscode/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
