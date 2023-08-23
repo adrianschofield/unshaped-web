@@ -1,29 +1,29 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-<header>
-    <div class="container">
-        <div class="d-grid gap-3">
-            <div class="card card-body bg-light col-sm-12">
-                <img class="card-img" src="images/Unshaped_Twitch_Channel_Art.png" />
+<!--<div class="page">-->
+    <header>
+        <div class="container">
+            <div class="d-grid gap-3">
+                <div class="card card-body bg-light col-sm-12">
+                    <img class="card-img" src="images/Unshaped_Twitch_Channel_Art.png" />
+                </div>
+                <div class="mynavbar">
+                    <NavMenu />
+                </div>
             </div>
-            <div class="mynavbar">
-                <NavMenu />
-            </div>
+        </div>   
+    </header>
+
+    <body>
+        <div class="container">
+            <main role="main" class="pb-3">
+                @Body
+            </main>
         </div>
-    </div>   
-</header>
+    </body>
 
-<body>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @Body
-        </main>
-    </div>
-</body>
-
-<footer>
-    <div class="container pt-10">
-        <Footer />
-    </div>
-</footer>
-</div>
+    <footer>
+        <div class="container pt-10">
+            <Footer />
+        </div>
+    </footer>
+<!--</div>-->
