@@ -1,0 +1,405 @@
+﻿@page "/ff"
+@using unshaped_web.Models
+
+<div class = "container">
+    <div class="row">
+        <div class="col-sm-1" style="text-align: center">
+            <img align="middle" src="images/fightingfantasy.png"/>
+        </div>
+    </div>
+</div>
+<h2>Fighting Fantasy battle simulator</h2>
+<div>
+    <ol>
+    <li>Fill in your Hero's Skill, Stamina and Luck</li>
+    <li>Fill in the Monster's Skill and Stamina</li>
+    <li>Press the "Accept Attrs" button</li>
+    <li>Click the "Attack" button for a round of combat</li>
+    <li>You can test your Luck after each round if you would like</li>
+    </ol>
+</div>
+<br/>
+<div class="container">
+    <EditForm Model="@fightingFantasy" OnValidSubmit="@HandleValidSubmit" >
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+
+        <div class="row">
+            <div class="col-5 h2">
+                @heroTitle
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-5 h2">
+                @monsterTitle
+            </div>
+        </div>
+        <p>
+            <div class="row">
+                <div class="col-2">
+                    <label for="heroSkill">Skill: </label>
+                </div>
+                <div class="col-2">
+                    <InputNumber id="heroSkill" @bind-Value="fightingFantasy.HeroSkill" />
+                    <ValidationMessage For="() => fightingFantasy.HeroSkill" />
+                </div>
+                <div class="col-3">
+                </div>
+                <div class="col-2">
+                    <label for="monsterSkill">Skill: </label>
+                </div>
+                <div class="col-2">
+                    <InputNumber id="monsterSkill" @bind-Value="fightingFantasy.MonsterSkill" />
+                    <ValidationMessage For="() => fightingFantasy.MonsterSkill" />
+                </div>
+            </div>
+        </p>
+        <p>
+            <div class="row">
+                <div class="col-2">
+                    <label for="heroStamina">Stamina: </label>
+                </div>
+                <div class="col-2">
+                    <InputNumber id="heroStamina" @bind-Value="fightingFantasy.HeroStamina" />
+                    <ValidationMessage For="() => fightingFantasy.HeroStamina" />
+                </div>
+                <div class="col-3">
+                </div>
+                <div class="col-2">
+                    <label for="monsterStamina">Stamina: </label>
+                </div>
+                <div class="col-2">
+                    <InputNumber id="monsterStamina" @bind-Value="fightingFantasy.MonsterStamina" />
+                    <ValidationMessage For="() => fightingFantasy.MonsterStamina" />
+                </div>
+            </div>
+        </p>
+        <p>
+            <div class="row">
+                <div class="col-2">
+                    <label for="heroLuck">Luck: </label>
+                </div>
+                <div class="col-2">
+                    <InputNumber id="heroLuck" @bind-Value="fightingFantasy.HeroLuck" />
+                    <ValidationMessage For="() => fightingFantasy.HeroLuck" />
+                </div>
+            </div>
+        </p>
+        <p>
+            <div class="row align-items-center">
+                <div class="col-2">
+                    <img width="48" height="48" src="https://img.icons8.com/color/48/rolling-dice.png" alt="rolling-dice"/>Hero Roll:
+                </div>
+                <div class="col-2 font-weight-bold" id="heroRoll" style="color:@heroRollColour">
+                    @heroRoll
+                </div>
+                <div class="col-3">
+                </div>
+                <div class="col-2">
+                    <img width="48" height="48" src="https://img.icons8.com/color/48/rolling-dice.png" alt="rolling-dice"/>Monster Roll:
+                </div>
+                <div class="col-2 font-weight-bold" id="monsterRoll" style="color:@monsterRollColour">
+                    @monsterRoll
+                </div>
+            </div>
+        </p>
+        <p>
+            <div class="row">
+                <div class="col-2" style="visibility:@displayLuck">
+                    <img width="48" height="48" src="https://img.icons8.com/color/48/rolling-dice.png" alt="rolling-dice"/>Hero Luck Roll:
+                </div>
+                <div class="col-2" id="heroRoll" style="color:@heroLuckRollColour;visibility:@displayLuck">
+                    @heroLuckRoll
+                </div>
+            </div>
+        </p>
+        <p>
+            <div class="row">
+                <div class="col-7">
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-primary" disabled="@attackDisabled" id="attackbtn" @onclick="Attack">Attack</button>
+                </div>
+                <div class="col-1">
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-primary" disabled="@luckDisabled" id="luckbtn" @onclick="TestLuck">Test Luck</button>
+                </div>
+            </div>
+        </p>
+        <p>
+            <div class="row">
+                <div class="col-2">
+                    <button class="btn btn-primary" id="acceptbtn" disabled="@acceptDisabled">Accept Attrs</button>
+                </div>
+                <div class="col-5">
+                </div>
+                <div class="col-2">
+                    <button type="submit" class="btn btn-primary" id="resetbtn" @onclick="Reset">Reset</button>
+                </div>
+            </div>
+        </p>
+    </EditForm>
+</div>
+
+
+@code {
+    // Enable or Disable buttons, null for enabled
+    protected string luckDisabled { get; set; } = "disabled";
+    protected string attackDisabled { get; set; } = "disabled";
+    protected string acceptDisabled { get; set; }
+
+    // Variables for the hero and monster rolls
+    protected string heroRoll { get; set; }
+    protected string monsterRoll { get; set; }
+    protected string heroLuckRoll { get; set; }
+    protected string heroRollColour { get; set; } = "black";
+    protected string monsterRollColour { get; set; } = "black";
+    protected string heroLuckRollColour { get; set; } = "black";
+
+    // Titles
+    protected string heroTitle { get; set; } = "Hero";
+    protected string monsterTitle { get; set; } = "Monster";
+
+    // Is the Luck roll disabled, this uses the visibility style
+    // null to display, hidden to hide
+    protected string displayLuck {get; set; } = "hidden";
+    
+    // The model for the page - had to call this specifically
+    // TODO see if we can fix this by renaming the page
+    // private unshaped_web.Models.FightingFantasy fightingFantasy = new unshaped_web.Models.FightingFantasy();
+    private FightingFantasy fightingFantasy = new FightingFantasy();
+
+    // Used to determine if the hero won an attack roll
+    // and then used when testing luck to determine correct path
+    private bool heroWon = false;
+
+    private async Task Attack() {
+        await Task.Run(() =>DoAttack()); 
+    }
+
+    private void DoAttack() {
+
+        // Clear up the UI
+        // If the Hero Luck roll is displayed we need to clear it
+        if (null == displayLuck) {
+            displayLuck = "hidden";
+            heroLuckRollColour = "black";
+        }
+
+        // Roll 2d6 for the hero and monster rolls and display them
+        Random rnd = new Random();
+        int myHeroRoll = rnd.Next(2, 13);
+        int myMonsterRoll = rnd.Next(2, 13);
+
+        heroRoll = myHeroRoll.ToString();
+        monsterRoll = myMonsterRoll.ToString();
+
+        // Determine the attack values
+        var heroAttack = myHeroRoll + fightingFantasy.HeroSkill;
+        var monsterAttack = myMonsterRoll + fightingFantasy.MonsterSkill;
+
+        // who won?
+        if (heroAttack > monsterAttack) {
+
+            heroWon = true;
+
+            // First update the colour of the roll, red for the loser and green for the winner
+            heroRollColour = "green";
+            monsterRollColour = "red";
+
+            // OK the Hero won, we need to remove two from the Monster ST, checking to see if they died
+            // And give the player the opportunity to test their Luck
+            IsMonsterDead();
+
+            // Enable the Test Luck button
+            luckDisabled = null;
+            // What will happen now is that the user can press the TestLuck button and that will be handled in separate code
+
+            // DBG
+            Console.WriteLine($"Hero won the roll ST: {fightingFantasy.HeroStamina}");
+
+        } else if (heroAttack < monsterAttack) {
+
+            heroWon = false;
+
+            // First update the colour of the roll, red for the loser and green for the winner
+            heroRollColour = "red";
+            monsterRollColour = "green";
+
+            // Check to see if the hero died - this code handles removing ST if the hero
+            // is not dead
+            IsHeroDead(false);
+
+            // Then enable the Test Luck button
+            luckDisabled = null;
+
+            // DBG
+            Console.WriteLine($"Hero lost the roll ST: {fightingFantasy.HeroStamina}");
+        }
+    }
+
+    private async Task TestLuck() {
+        await Task.Run(() =>DoTestLuck()); 
+    }
+
+    private void DoTestLuck() {
+        
+        bool luckSuccess = false;
+        
+        // Create the Luck Roll
+        Random rnd = new Random();
+        int myLuckRoll = rnd.Next(2, 13);
+        
+        // Test against Hero Luck
+        if (myLuckRoll <= fightingFantasy.HeroLuck) {
+            luckSuccess = true;
+        }
+
+        // Show the Luck roll in the correct colour
+        heroLuckRoll = myLuckRoll.ToString();
+        displayLuck = null;
+        if (luckSuccess) {
+            heroLuckRollColour = "green";
+        } else {
+            heroLuckRollColour = "red";
+        }
+
+        // Then we subtract Luck for the test
+        fightingFantasy.HeroLuck--;
+
+        // Then we need to check to see if we are here because the Hero won or not
+        if (heroWon) {
+            if (luckSuccess) {
+                IsMonsterDead();
+            }
+        } else {
+            if (luckSuccess) {
+                fightingFantasy.HeroStamina++;
+            } //else {
+            IsHeroDead(true);
+            //}
+        }
+        // Last thing we do here is disable the button
+        luckDisabled = "disabled";
+    }
+
+    private void IsMonsterDead () {
+
+        // We need to see if the monster died with the extra hits
+        var tempSt = fightingFantasy.MonsterStamina - 2;
+
+        if (tempSt <= 0) {
+            // Monster is Slain - woo hoo!
+            monsterTitle = "Monster was slain";
+
+            // Clear the Monster stats
+            fightingFantasy.MonsterSkill = 0;
+            fightingFantasy.MonsterStamina = 0;
+
+            // Clear the Hero and Monster rolls
+            heroRoll = null;
+            monsterRoll = null;
+
+            // We need to enable to Accept button and disable Attack
+            attackDisabled = "disabled";
+            acceptDisabled = null;
+
+        } else {
+            fightingFantasy.MonsterStamina = tempSt;
+        }
+    }
+
+    private void IsHeroDead (bool fromLuck) {
+
+        // We have a parameter in this test to see if we came from a Luck
+        // Roll or not
+
+        if (fromLuck) {
+
+            // Testing against the actual Stamina as it was updated earlier in the code            
+            if (fightingFantasy.HeroStamina <= 0) {
+
+                // Hero is Slain - oh no!
+                heroTitle = "Hero was slain - sorry!";
+                // Clear the Hero stats
+                fightingFantasy.HeroStamina = 0;
+
+                // Clear the Hero and Monster rolls
+                heroRoll = null;
+                monsterRoll = null;
+
+                // We need to enable to Accept button and disable Attack
+                attackDisabled = "disabled";
+                acceptDisabled = null;
+            }
+
+        } else {
+            
+            // We need to see if the hero died with the extra hits
+            var tempST = fightingFantasy.HeroStamina - 2;
+
+            if (tempST < 0) {
+                // Hero is Slain - oh no!
+                heroTitle = "Hero was slain - sorry!";
+
+                // Clear the Hero stats
+                fightingFantasy.HeroStamina = 0;
+
+                // Clear the Hero and Monster rolls
+                heroRoll = null;
+                monsterRoll = null;
+
+                // We need to enable to Accept button and disable Attack
+                attackDisabled = "disabled";
+                acceptDisabled = null;
+
+            } else if (tempST == 0) {
+                // Hero is close to death - let's warn the player
+                heroTitle = "Hero is close to Death";
+
+                fightingFantasy.HeroStamina = 0;
+                
+                // We need to enable Test Luck button and disable Attack
+                attackDisabled = "disabled";
+                luckDisabled = null;
+            }
+            else {
+                fightingFantasy.HeroStamina = tempST;
+            }
+        }
+    }
+
+    private async Task Reset() {
+        await Task.Run(() =>DoReset()); 
+    }
+
+    private void DoReset() {
+        // This just resets the form to it's original configuration
+        fightingFantasy.HeroSkill = 0;
+        fightingFantasy.HeroStamina = 0;
+        fightingFantasy.HeroLuck = 0;
+        fightingFantasy.MonsterSkill = 0;
+        fightingFantasy.MonsterStamina = 0;
+
+        heroRoll = null;
+        monsterRoll = null;
+
+        luckDisabled = "disabled";
+        attackDisabled = "disabled";
+        acceptDisabled = null;
+
+        heroTitle = "Hero";
+        monsterTitle = "Monster";
+
+        displayLuck = "hidden";
+    }
+
+    private void HandleValidSubmit(){
+        attackDisabled = null;
+        acceptDisabled =  "disabled";
+
+        heroTitle = "Hero";
+        monsterTitle = "Monster";
+    }
+}
