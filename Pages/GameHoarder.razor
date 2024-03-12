@@ -1,6 +1,7 @@
 ﻿@page "/gamehoarder"
 @using unshaped_web.Models
 
+<br/>
 <h2>Game Hoarder</h2>
 <div>
     Data from my API that shows how many games I've got and how many are left to play
@@ -22,7 +23,7 @@
 
     private Random random = new();
 
-    protected override async void OnInitialized()
+    protected override void OnInitialized()
     {
         backgroundColors = ColorBuilder.CategoricalTwelveColors;
         chartData = new ChartData { Labels = GetDefaultDataLabels(4), Datasets = GetDefaultDataSets(1) };
