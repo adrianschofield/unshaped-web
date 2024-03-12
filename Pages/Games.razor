@@ -38,7 +38,7 @@ else
     </table>-->
     @foreach (var game in games)
     {
-        <div class="container ps-4 pt-2 pb-4 border">
+        <div class="container ps-4 pt-2 pb-4 border mt-xl">
             <div class="row display-6">
                 @game.Title
             </div>
@@ -67,7 +67,8 @@ else
         games = await Http.GetFromJsonAsync<GamesData[]>("games/gamedata.json");
         foreach (var game in games) {     
             var temp = game.Thumbnail.Substring(0, game.Thumbnail.IndexOf("/", 7));
-            game.Link = $"{temp}/index.html";  
+            game.Link = $"{temp}/index.html";
+            Console.WriteLine(game.Link);
         }
     }
 

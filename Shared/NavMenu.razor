@@ -1,14 +1,16 @@
 ﻿<div class="container">
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-light border box-shadow mb-3">
+    <!--<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border box-shadow mb-3">-->
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm">
         <div class="container-fluid">
             <a class="navbar-brand" href="">
-                <img src="images/Channel_Icon_small.png" alt="" width="24" height="24">
+                <!--<img src="images/Channel_Icon_small.png" alt="" width="24" height="24">-->
+                <img src="images/banner_2402_40high.png" alt="" width="353" height="40">
             </a>
             <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="@NavMenuCssClass"  @onclick="ToggleNavMenu">
-                <ul class="navbar-nav flex-grow-1">
+                <ul class="navbar-nav flex-grow-1 justify-content-end">
                     <li class="nav-item">
                         <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                             <span class="oi oi-home" aria-hidden="true"></span> Home

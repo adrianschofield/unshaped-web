@@ -10,6 +10,11 @@
         "description": "A simple block break game built with Unity",
         "thumbnail": "games/blocku/thumbnail.png",
         "unity": true
+    },
+    {
+        "title": "Block Break (Godot)",
+        "description": "A simple block break game built with Godot",
+        "thumbnail": "games/blockg/thumbnail.png",
+        "unity": false
     }
 ]
-
