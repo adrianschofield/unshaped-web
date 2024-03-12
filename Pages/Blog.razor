@@ -228,7 +228,8 @@ else
         public bool sticky { get; set; }
         public string template { get; set; }
         public string format { get; set; }
-        public List<object> meta { get; set; }
+        // Commenting out meta as it currently causes a deserialization error
+        //public List<object> meta { get; set; }
         public List<int> categories { get; set; }
         public List<object> tags { get; set; }
         public Links _links { get; set; }
